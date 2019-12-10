@@ -4,16 +4,21 @@ const webpack = require('webpack')
 const config = require('./config')
 const merge = require('webpack-merge')
 const path = require('path')
+const chalk = require('chalk')
 const baseWebpackConfig = require('./webpack.base.conf')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
+// const DashboardPlugin = require('webpack-dashboard/plugin')
 
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
 
+chalk.green(path.posix.join(config.dev.assetsPublicPath, '404.html'))
+
 const devWebpackConfig = merge(baseWebpackConfig, {
+    mode: config.dev.env.NODE_ENV,
     // cheap-module-eval-source-map is faster for development
     devtool: config.dev.devtool,
     devServer: {
@@ -21,7 +26,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         // 404重定向
         historyApiFallback: {
             rewrites: [
-                { from: /.*/, to: path.posix.join(config.dev.assetsPublicPath, '../public/index.html') },
+                { from: /.*/, to: path.posix.join(config.dev.assetsPublicPath, '404.html') },
             ],
         },
         // 注意，必须有 webpack.HotModuleReplacementPlugin 才能完全启用 HMR。
@@ -40,7 +45,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
             : false,
         publicPath: config.dev.assetsPublicPath,
         proxy: config.dev.proxyTable,
-        quiet: true, // necessary for FriendlyErrorsPlugin
+        quiet: false, // necessary for FriendlyErrorsPlugin
         stats: 'errors-only',
         // 监听文件变化
         // watchOptions: {
@@ -48,17 +53,12 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         // },
         disableHostCheck: true,
     },
-    // optimization: {
-    //     noEmitOnErrors: true,
-    //     namedModules: true,
-    // },
     plugins: [
         new webpack.DefinePlugin({
-            'process.env': {
-                NODE_ENV: '"development"',
-                VERSION: new Date().getTime()
-            }
+            'process.env': config.dev.env
         }),
+        new webpack.NamedModulesPlugin(), // HMR shows correct file names in console on update.
+        new webpack.NoEmitOnErrorsPlugin(),
         // 热更新
         new webpack.HotModuleReplacementPlugin(), // HMR shows correct
         // copy custom static assets
@@ -74,6 +74,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
                 ignore: ['.*']
             }
         ]),
+        // new DashboardPlugin()
     ]
 });
 

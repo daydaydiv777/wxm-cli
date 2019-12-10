@@ -64,3 +64,13 @@ exports.displayFile = (params) => {
     })
 }
 
+exports.isFileExit = (fileNamePath) => {
+    try {
+        fs.statSync(path.resolve(__dirname, fileNamePath))
+    } catch (e) {
+
+    }
+
+}
+
+

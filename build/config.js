@@ -13,7 +13,11 @@ module.exports = {
         poll: false,
 
         devtool: 'cheap-module-eval-source-map',
-        notifyOnErrors: true
+        notifyOnErrors: true,
+        env: {
+            NODE_ENV: 'development',
+            VERSION: new Date().getTime()
+        }
     },
     build: {
         // Template for index.html
@@ -23,5 +27,12 @@ module.exports = {
         assetsRoot: path.resolve(__dirname, '../dist'),
         assetsSubDirectory: 'static',
         assetsPublicPath: '/',
+
+        productionSourceMap: true,
+        devtool: '#source-map',
+        env: {
+            NODE_ENV: 'production',
+            VERSION: new Date().getTime()
+        }
     }
 };
